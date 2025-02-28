@@ -1,4 +1,4 @@
-export default function sendResponse(res, { 
+export default function appResponse(res, { 
     statusCode = 200, 
     message = 'Success', 
     success = true, 

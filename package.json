@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --env-file=.dev.env server",
+    "dev": " nodemon --env-file=.dev.env  server",
     "pro": "node --env-file=.env server"
   },
   "keywords": [],
@@ -14,6 +14,8 @@
   "license": "ISC",
   "packageManager": "pnpm@10.4.1",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "chalk": "^5.4.1",
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
