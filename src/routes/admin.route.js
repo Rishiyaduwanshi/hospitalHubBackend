@@ -1,6 +1,14 @@
-import { Router } from "express";
+import { Router } from 'express';
+import { signinAdmin, signupAdmin } from '../handlers/admin.handler.js';
 
-const route = Router();
-route.get("/", (req, res) => {
-  res.send("Admin Route");
+const router = Router();
+
+router.post('/signup', signupAdmin)
+
+router.post('/signin', signinAdmin);
+
+router.post('/logout', (req, res) => {
+  res.send('Logout');
 });
+
+export default router;
