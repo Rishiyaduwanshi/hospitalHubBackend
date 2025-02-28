@@ -4,10 +4,11 @@ import path from 'path';
 import chalk from 'chalk';
 import { fileURLToPath } from "url";
 import packageJson from './package.json' assert { type: 'json' };
-import logger from './src/utils/errorLogger.js';
-import { AppError } from './src/utils/appError.js';
+import logger from './src/helpers/errorLogger.js';
+import { AppError } from './src/helpers/appError.js';
 import { MulterError } from 'multer';
-import appLogger from './src/utils/appLogger.js';
+import appLogger from './src/helpers/appLogger.js';
+import _ from './db/connectDb.js';
 
 const version = packageJson.version;
 const app = express();
@@ -28,7 +29,7 @@ import adminRoute from './src/routes/admin.route.js';
 
 
 // Routes
-app.use(`/api/v${version}`, adminRoute);
+app.use(`/api/v${version}/admin`, adminRoute);
 
 
 
