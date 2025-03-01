@@ -21,21 +21,19 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(appLogger); 
  
 
 // import routes 
 import adminRoute from './src/routes/admin.route.js';
+import hospitalRoute from './src/routes/hospital.route.js';
+
 
 
 // Routes
 app.use(`/api/v${version}/admin`, adminRoute);
-
-
-
-
-
-
+app.use(`/api/v${version}`, hospitalRoute);
 
 
 
