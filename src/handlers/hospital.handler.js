@@ -4,11 +4,12 @@ import sendResponse from '../helpers/appResponse.js';
 
 export const createHospital = async (req, res, next) => {
   try {
-    const { name, city, state, address, speciality} = req.body;
+    const { name, city, state, address, speciality } = req.body;
 
     if (!name || !city || !state || !address || !speciality) {
       throw new AppError({
-        message: 'Please provide all required fields: name, city, state, address, and speciality',
+        message:
+          'Please provide all required fields: name, city, state, address, and speciality',
         statusCode: 400,
       });
     }
@@ -20,8 +21,9 @@ export const createHospital = async (req, res, next) => {
       });
     }
 
-    const imageUrls = req.files.map(image => 
-      `${req.protocol}://${req.get('host')}/uploads/${image.filename}`
+    const imageUrls = req.files.map(
+      (image) =>
+        `${req.protocol}://${req.get('host')}/uploads/${image.filename}`
     );
 
     const hospital = new Hospital({
@@ -29,7 +31,7 @@ export const createHospital = async (req, res, next) => {
       city,
       state,
       address,
-      images : imageUrls,
+      images: imageUrls,
       speciality,
     });
 
@@ -39,10 +41,10 @@ export const createHospital = async (req, res, next) => {
       statusCode: 201,
       message: 'Hospital created successfully',
       data: {
-        name : savedHospital.name,
-        id : savedHospital._id,
-        images : savedHospital.images,
-      }
+        name: savedHospital.name,
+        id: savedHospital._id,
+        images: savedHospital.images,
+      },
     });
   } catch (error) {
     next(error);
@@ -55,7 +57,8 @@ export const getHospitalsByFilter = async (req, res, next) => {
 
     if (!city && !state && !speciality) {
       throw new AppError({
-        message: 'Please provide at least one filter: city, state, or speciality',
+        message:
+          'Please provide at least one filter: city, state, or speciality',
         statusCode: 400,
       });
     }
@@ -83,8 +86,28 @@ export const getHospitalsByFilter = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
+export const getAllHospitals = async (_, res, next) => {
+  try {
+    const hospitals = await Hospital.find();
+
+    if (!hospitals.length) {
+      return next(new AppError({
+        message: 'No hospitals found',
+        statusCode: 404,
+      }));
+    }
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: 'Hospitals fetched successfully',
+      data: hospitals,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const deleteHospitalById = async (req, res, next) => {
   try {
@@ -113,8 +136,7 @@ export const deleteHospitalById = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
-
+};
 
 export const updateHospitalById = async (req, res, next) => {
   try {
@@ -147,4 +169,35 @@ export const updateHospitalById = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
+
+
+export const getHospitalById = async (req, res, next) => {
+  try {
+    const { id } = req.params; // URL se hospital ID le rahe hain
+
+    if (!id) {
+      throw new AppError({
+        message: "Please provide hospital id",
+        statusCode: 400,
+      });
+    }
+
+    const hospital = await Hospital.findById(id);
+
+    if (!hospital) {
+      throw new AppError({
+        message: "No hospital found with the provided id",
+        statusCode: 404,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: "Hospital fetched successfully",
+      data: hospital,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

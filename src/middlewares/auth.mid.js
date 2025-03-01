@@ -6,6 +6,7 @@ const isDev = process.env.MODE === "DEV";
 
 const protectRoute = async (req, res, next) => {
   try {
+    console.log(req.cookies);
     const token = req.cookies.tala || req.headers.authorization?.split(" ")[1];
 
     if (!token) {
