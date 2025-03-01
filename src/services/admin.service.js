@@ -1,5 +1,6 @@
 import Admin from '../models/admin.model.js';
-import bcrypt from 'bcryptjs';1
+import bcrypt from 'bcryptjs';
+1;
 
 const isUsernameOrEmailExist = async (email, username) => {
   return await Admin.findOne({
@@ -12,27 +13,45 @@ const hashPassword = async (password) => {
   return await bcrypt.hash(password, salt);
 };
 
-const isPasswordLengthValid = (password,minLength) => {
+const isPasswordLengthValid = (password, minLength) => {
   return password.length >= minLength;
 };
 
-
-const allowedDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "protonmail.com", "zoho.com", "yandex.com", "rediffmail.com"];
+const allowedDomains = [
+  'gmail.com',
+  'yahoo.com',
+  'outlook.com',
+  'hotmail.com',
+  'icloud.com',
+  'protonmail.com',
+  'zoho.com',
+  'yandex.com',
+  'rediffmail.com',
+];
 
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) return false;
 
-  const [localPart, domain] = email.split("@");
+  const [localPart, domain] = email.split('@');
 
   if (!allowedDomains.includes(domain)) return false;
 
-  if (domain === "gmail.com") {
-    const cleanEmail = localPart.replace(/\./g, "") + "@gmail.com";
-    return cleanEmail; 
+  if (domain === 'gmail.com') {
+    const cleanEmail = localPart.replace(/\./g, '') + '@gmail.com';
+    return cleanEmail;
   }
   return email;
 };
 
+const isPasswordMatch = async (password, hash) => {
+  return await bcrypt.compare(password, hash);
+};
 
-export { isUsernameOrEmailExist, hashPassword, isPasswordLengthValid, isValidEmail };
+export {
+  isUsernameOrEmailExist,
+  hashPassword,
+  isPasswordLengthValid,
+  isValidEmail,
+  isPasswordMatch,
+};
