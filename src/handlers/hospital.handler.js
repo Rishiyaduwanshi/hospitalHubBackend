@@ -57,30 +57,29 @@ export const getHospitalsByFilter = async (req, res, next) => {
 
     if (!city && !state && !speciality) {
       throw new AppError({
-        message:
-          'Please provide at least one filter: city, state, or speciality',
+        message: "Please provide at least one filter: city, state, or speciality",
         statusCode: 400,
       });
     }
 
     const filter = {};
 
-    if (city) filter.city = city;
-    if (state) filter.state = state;
-    if (speciality) filter.speciality = speciality;
+    if (city) filter.city = new RegExp(`^${city.trim()}$`, "i");
+    if (state) filter.state = new RegExp(`^${state.trim()}$`, "i");
+    if (speciality) filter.speciality = new RegExp(`^${speciality.trim()}$`, "i");
 
     const hospitals = await Hospital.find(filter);
 
     if (hospitals.length === 0) {
       throw new AppError({
-        message: 'No hospitals found with the provided filters',
+        message: "No hospitals found with the provided filters",
         statusCode: 404,
       });
     }
 
     sendResponse(res, {
       statusCode: 200,
-      message: 'Hospitals fetched successfully',
+      message: "Hospitals fetched successfully",
       data: hospitals,
     });
   } catch (error) {
