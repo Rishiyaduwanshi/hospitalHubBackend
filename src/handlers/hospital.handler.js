@@ -48,3 +48,69 @@ export const createHospital = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getHospitalsByFilter = async (req, res, next) => {
+  try {
+    const { city, state, speciality } = req.query;
+
+    if (!city && !state && !speciality) {
+      throw new AppError({
+        message: 'Please provide at least one filter: city, state, or speciality',
+        statusCode: 400,
+      });
+    }
+
+    const filter = {};
+
+    if (city) filter.city = city;
+    if (state) filter.state = state;
+    if (speciality) filter.speciality = speciality;
+
+    const hospitals = await Hospital.find(filter);
+
+    if (hospitals.length === 0) {
+      throw new AppError({
+        message: 'No hospitals found with the provided filters',
+        statusCode: 404,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: 'Hospitals fetched successfully',
+      data: hospitals,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+export const deleteHospitalById = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+      throw new AppError({
+        message: 'Please provide hospital id',
+        statusCode: 400,
+      });
+    }
+
+    const hospital = await Hospital.findByIdAndDelete(id);
+
+    if (!hospital) {
+      throw new AppError({
+        message: 'No hospital found with the provided id',
+        statusCode: 404,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: `${hospital.name} deleted successfully`,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
