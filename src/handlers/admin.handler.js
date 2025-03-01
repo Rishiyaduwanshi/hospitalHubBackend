@@ -83,9 +83,6 @@ const signupAdmin = async (req, res, next) => {
 const signinAdmin = async (req, res, next) => {
   try {
     const { usernameOrEmail, password } = req.body;
-console.log(req.body);
-    console.log(usernameOrEmail, password);
-
     if (!usernameOrEmail || !password) {
       throw new AppError({
         message: 'Please provide all fields',
@@ -96,7 +93,7 @@ console.log(req.body);
     const admin = await Admin.findOne({
       $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }],
     });
-    if (!admin || !(isPasswordMatch(password, admin.password))) {
+    if (!admin ||  !(await isPasswordMatch(password, admin.password))) {
       throw new AppError({
         message: 'Invalid credentials',
         statusCode: 401,
