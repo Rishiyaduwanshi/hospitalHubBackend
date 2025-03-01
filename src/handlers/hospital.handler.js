@@ -114,3 +114,37 @@ export const deleteHospitalById = async (req, res, next) => {
     next(error);
   }
 }
+
+
+export const updateHospitalById = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+      throw new AppError({
+        message: 'Please provide hospital id',
+        statusCode: 400,
+      });
+    }
+
+    const hospital = await Hospital.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!hospital) {
+      throw new AppError({
+        message: 'No hospital found with the provided id',
+        statusCode: 404,
+      });
+    }
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: 'Hospital updated successfully',
+      data: hospital,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
