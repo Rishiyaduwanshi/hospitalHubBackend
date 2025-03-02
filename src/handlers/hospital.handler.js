@@ -4,12 +4,12 @@ import sendResponse from '../helpers/appResponse.js';
 
 export const createHospital = async (req, res, next) => {
   try {
-    const { name, city, address, speciality } = req.body;
+    const { name, city, address, speciality, ...other } = req.body;
 
     if (!name || !city || !address || !speciality) {
       throw new AppError({
         message:
-          'Please provide all required fields: name, city, address, and speciality',
+          'Name, city, address, and speciality are required fields',
         statusCode: 400,
       });
     }
@@ -32,6 +32,7 @@ export const createHospital = async (req, res, next) => {
       address,
       images: imageUrls,
       speciality: speciality.split(",").map(item => item.trim()),
+      ...other,
     });
 
     const savedHospital = await hospital.save();

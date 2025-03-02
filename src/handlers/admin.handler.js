@@ -1,4 +1,4 @@
-import Admin from '../models/admin.model.js';
+import Admin from '../models/admin.model.js';import Hospital from "../models/hospital.model.js";
 import { AppError } from '../helpers/appError.js';
 import sendResponse from '../helpers/appResponse.js';
 import {
@@ -133,5 +133,26 @@ const signoutAdmin = async (req, res, next) => {
     next(error);
   }
 }
+
+
+export const getHospitalStats = async (req, res, next) => {
+  try {
+    const totalHospitals = await Hospital.countDocuments();
+    const totalDoctors = await Hospital.aggregate([
+      { $group: { _id: null, totalDoctors: { $sum: "$numberOfDoctors" } } }
+    ]);
+
+    sendResponse(res, {
+      statusCode: 200,
+      message: "Hospital stats fetched successfully",
+      data: {
+        totalHospitals,
+        totalDoctors: totalDoctors.length > 0 ? totalDoctors[0].totalDoctors : 0
+      },
+    });
+  } catch (error) {
+    next(new AppError({ message: "Failed to fetch stats", statusCode: 500 }));
+  }
+};
 
 export { signupAdmin, signinAdmin, signoutAdmin };
