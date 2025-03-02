@@ -1,4 +1,5 @@
-import Admin from '../models/admin.model.js';import Hospital from "../models/hospital.model.js";
+import Admin from '../models/admin.model.js';
+import Hospital from '../models/hospital.model.js';
 import { AppError } from '../helpers/appError.js';
 import sendResponse from '../helpers/appResponse.js';
 import {
@@ -6,13 +7,14 @@ import {
   hashPassword,
   isPasswordLengthValid,
   isValidEmail,
-  isPasswordMatch
+  isPasswordMatch,
 } from '../services/admin.service.js';
 import { generateToken } from '../helpers/jwt.js';
 
 const cookieOptions = {
   httpOnly: true,
-  maxAge:  process.env.MODE === 'DEV' ? 30 * 24*60*60*1000 : 15 * 60 * 1000, 
+  maxAge:
+    process.env.MODE === 'DEV' ? 30 * 24 * 60 * 60 * 1000 : 15 * 60 * 1000,
   secure: process.env.MODE === 'DEV' ? false : true,
   sameSite: 'none',
 };
@@ -90,10 +92,17 @@ const signinAdmin = async (req, res, next) => {
       });
     }
 
+    const trimAndLowercaseUsernameOrEmail = usernameOrEmail
+      .trim()
+      .toLowerCase();
+
     const admin = await Admin.findOne({
-      $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }],
+      $or: [
+        { email: trimAndLowercaseUsernameOrEmail },
+        { username: trimAndLowercaseUsernameOrEmail },
+      ],
     });
-    if (!admin ||  !(await isPasswordMatch(password, admin.password))) {
+    if (!admin || !(await isPasswordMatch(password, admin.password))) {
       throw new AppError({
         message: 'Invalid credentials',
         statusCode: 401,
@@ -121,7 +130,6 @@ const signinAdmin = async (req, res, next) => {
   }
 };
 
-
 const signoutAdmin = async (req, res, next) => {
   try {
     res.clearCookie('tala');
@@ -132,26 +140,26 @@ const signoutAdmin = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
-
+};
 
 export const getHospitalStats = async (req, res, next) => {
   try {
     const totalHospitals = await Hospital.countDocuments();
     const totalDoctors = await Hospital.aggregate([
-      { $group: { _id: null, totalDoctors: { $sum: "$numberOfDoctors" } } }
+      { $group: { _id: null, totalDoctors: { $sum: '$numberOfDoctors' } } },
     ]);
 
     sendResponse(res, {
       statusCode: 200,
-      message: "Hospital stats fetched successfully",
+      message: 'Hospital stats fetched successfully',
       data: {
         totalHospitals,
-        totalDoctors: totalDoctors.length > 0 ? totalDoctors[0].totalDoctors : 0
+        totalDoctors:
+          totalDoctors.length > 0 ? totalDoctors[0].totalDoctors : 0,
       },
     });
   } catch (error) {
-    next(new AppError({ message: "Failed to fetch stats", statusCode: 500 }));
+    next(new AppError({ message: 'Failed to fetch stats', statusCode: 500 }));
   }
 };
 
