@@ -8,6 +8,7 @@ import logger from './src/helpers/errorLogger.js';
 import { AppError } from './src/helpers/appError.js';
 import { MulterError } from 'multer';
 import appLogger from './src/helpers/appLogger.js';
+import cookieParser from "cookie-parser";
 import _ from './db/connectDb.js';
 import cors from 'cors';
 
@@ -33,22 +34,23 @@ const corsOptions = {
   },
   credentials: true,
 };
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(appLogger);
 
-// import routes
 import adminRoute from './src/routes/admin.route.js';
 import hospitalRoute from './src/routes/hospital.route.js';
+import authRoute from './src/routes/auth.route.js';
 
 // Routes
 app.use(`/api/v${version}/admin`, adminRoute);
 app.use(`/api/v${version}`, hospitalRoute);
-
+app.use(`/api/v${version}/auth`, authRoute);
 app.use((err, req, res, next) => {
   try {
     const isDev = MODE?.toUpperCase() === 'DEV';

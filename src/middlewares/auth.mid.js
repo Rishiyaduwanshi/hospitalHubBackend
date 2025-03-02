@@ -6,12 +6,17 @@ const isDev = process.env.MODE === "DEV";
 
 const protectRoute = async (req, res, next) => {
   try {
-    console.log(req.cookies);
+    console.log("Cookies:", req.cookies);
+
+    if (!req.cookies) {
+      throw new AppError({ message: "Cookies not found", statusCode: 401 });
+    }
+
     const token = req.cookies.tala || req.headers.authorization?.split(" ")[1];
 
     if (!token) {
       throw new AppError({ 
-        message: isDev ? 'Not authorized, token missing' : 'Unauthorized access', 
+        message: isDev ? "Not authorized, token missing" : "Unauthorized access", 
         statusCode: 401 
       });
     }
@@ -21,22 +26,15 @@ const protectRoute = async (req, res, next) => {
       decoded = verifyToken(token);
     } catch (error) {
       throw new AppError({ 
-        message: isDev ? 'Token expired or invalid' : 'Unauthorized access', 
+        message: isDev ? "Token expired or invalid" : "Unauthorized access", 
         statusCode: 401 
       });
     }
 
-    if (decoded.ip !== req.ip || decoded.userAgent !== req.headers['user-agent']) {
-      throw new AppError({ 
-        message: isDev ? 'Token stolen or invalid!' : 'Unauthorized access', 
-        statusCode: 401 
-      });
-    }
-
-    req.admin = await Admin.findById(decoded.id).select('_id');
+    req.admin = await Admin.findById(decoded.id).select("_id");
     if (!req.admin) {
       throw new AppError({ 
-        message: isDev ? 'Admin not found' : 'Unauthorized access', 
+        message: isDev ? "Admin not found" : "Unauthorized access", 
         statusCode: 404 
       });
     }
