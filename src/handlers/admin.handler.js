@@ -14,7 +14,7 @@ const cookieOptions = {
   httpOnly: true,
   maxAge:  process.env.MODE === 'DEV' ? 30 * 24*60*60*1000 : 15 * 60 * 1000, 
   secure: process.env.MODE === 'DEV' ? false : true,
-  sameSite: 'Strict',
+  sameSite: 'none',
 };
 
 const signupAdmin = async (req, res, next) => {
