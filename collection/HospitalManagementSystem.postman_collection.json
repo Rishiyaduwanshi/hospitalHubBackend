@@ -1,0 +1,339 @@
+{
+	"info": {
+		"_postman_id": "bd27e595-2dd0-4bce-91bc-64948d2a839b",
+		"name": "Hospital Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33766937"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Signup Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"Abhinav Prakash\",\r\n    \"email\" : \"abhinav@gmail.com\",\r\n    \"username\" : \"Abhinav\",\r\n    \"password\" : \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sigin Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usernameOrEmail\" : \"Abhinav\",\r\n    \"password\" : \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signout Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/signout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hospital",
+			"item": [
+				{
+					"name": "Fetch Hospitals by Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/hospitals/filter?city=New Delhi&speciality=kidney",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hospitals",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "New Delhi"
+								},
+								{
+									"key": "speciality",
+									"value": "kidney"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hospital By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/hospitals/67c3dce22ff2181594989185",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hospitals",
+								"67c3dce22ff2181594989185"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all hospitals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/hospitals",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hospitals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Hospital",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "AIIMS",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "New Delhi",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "Near Anand Bihar Terminal",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": [
+										"/S:/Users/Downloads/pexels-shvetsa-3845810.jpg",
+										"/S:/Users/Downloads/pexels-chokniti-khongchum-1197604-3938022.jpg",
+										"/S:/Users/Downloads/pexels-jonathanborba-3259629.jpg"
+									]
+								},
+								{
+									"key": "speciality",
+									"value": "Kidney, Brain",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/hospitals",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hospitals"
+							]
+						},
+						"description": "This endpoint allows you to add a new hospital by making an HTTP POST request to {{baseUrl}}/hospitals. The request should include form-data in the body with the following parameters:\n\n- `name` (text): The name of the hospital.\n    \n- `city` (text): The city where the hospital is located.\n    \n- `state` (text): The state where the hospital is located.\n    \n- `address` (text): The address of the hospital.\n    \n- `images` (file): Images of the hospital.\n    \n- `speciality` (text): The speciality of the hospital.\n    \n- `rating` (text): The rating of the hospital.\n    \n\nTo add random demo data for this route, you can populate the form-data parameters with sample information for a new hospital."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Hospital",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"Abra Ka Dabra Hospital\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/hospitals/67c2a968cbb38cd2c25dbef7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hospitals",
+								"67c2a968cbb38cd2c25dbef7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Hospital by _id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/hospitals/67c2a968cbb38cd2c25dbef7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hospitals",
+								"67c2a968cbb38cd2c25dbef7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hospital Statitics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Check Auth Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
