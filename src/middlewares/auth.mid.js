@@ -6,7 +6,6 @@ const isDev = process.env.MODE === "DEV";
 
 const protectRoute = async (req, res, next) => {
   try {
-    console.log("Cookies:", req.cookies);
 
     if (!req.cookies) {
       throw new AppError({ message: "Cookies not found", statusCode: 401 });

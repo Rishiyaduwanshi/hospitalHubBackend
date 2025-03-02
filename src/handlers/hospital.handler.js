@@ -107,7 +107,7 @@ export const getAllHospitals = async (_, res, next) => {
 
 export const deleteHospitalById = async (req, res, next) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
 
     if (!id) {
       throw new AppError({

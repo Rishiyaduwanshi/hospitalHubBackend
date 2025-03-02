@@ -15,8 +15,6 @@ const router = Router();
 router.route("/hospitals/filter").get(getHospitalsByFilter);
 
 
-router.route("/hospitals/:id").delete(protectRoute, deleteHospitalById);
-
 router
   .route("/hospitals")
   .get(getAllHospitals)
@@ -26,6 +24,7 @@ router
 router
   .route("/hospitals/:id")
   .get(getHospitalById)
-  .patch(protectRoute, updateHospitalById);
+  .patch(protectRoute, updateHospitalById)
+  .delete(protectRoute, deleteHospitalById);
 
 export default router;
