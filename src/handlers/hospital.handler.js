@@ -4,12 +4,12 @@ import sendResponse from '../helpers/appResponse.js';
 
 export const createHospital = async (req, res, next) => {
   try {
-    const { name, city, state, address, speciality } = req.body;
+    const { name, city, address, speciality } = req.body;
 
-    if (!name || !city || !state || !address || !speciality) {
+    if (!name || !city || !address || !speciality) {
       throw new AppError({
         message:
-          'Please provide all required fields: name, city, state, address, and speciality',
+          'Please provide all required fields: name, city, address, and speciality',
         statusCode: 400,
       });
     }
@@ -29,10 +29,9 @@ export const createHospital = async (req, res, next) => {
     const hospital = new Hospital({
       name,
       city,
-      state,
       address,
       images: imageUrls,
-      speciality,
+      speciality: speciality.split(",").map(item => item.trim()),
     });
 
     const savedHospital = await hospital.save();
@@ -53,11 +52,11 @@ export const createHospital = async (req, res, next) => {
 
 export const getHospitalsByFilter = async (req, res, next) => {
   try {
-    const { city, state, speciality } = req.query;
+    const { city, speciality } = req.query;
 
-    if (!city && !state && !speciality) {
+    if (!city && !speciality) {
       throw new AppError({
-        message: "Please provide at least one filter: city, state, or speciality",
+        message: "Please provide at least one filter: city, or speciality",
         statusCode: 400,
       });
     }
@@ -65,9 +64,7 @@ export const getHospitalsByFilter = async (req, res, next) => {
     const filter = {};
 
     if (city) filter.city = new RegExp(`^${city.trim()}$`, "i");
-    if (state) filter.state = new RegExp(`^${state.trim()}$`, "i");
     if (speciality) filter.speciality = new RegExp(`^${speciality.trim()}$`, "i");
-
     const hospitals = await Hospital.find(filter);
 
     if (hospitals.length === 0) {
