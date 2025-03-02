@@ -121,4 +121,17 @@ const signinAdmin = async (req, res, next) => {
   }
 };
 
-export { signupAdmin, signinAdmin };
+
+const signoutAdmin = async (req, res, next) => {
+  try {
+    res.clearCookie('tala');
+    sendResponse(res, {
+      statusCode: 200,
+      message: 'Signout successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export { signupAdmin, signinAdmin, signoutAdmin };
