@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import chalk from 'chalk';
 import { fileURLToPath } from 'url';
-import packageJson from './package.json' assert { type: 'json' };
+import fs from 'fs';
 import logger from './src/helpers/errorLogger.js';
 import { AppError } from './src/helpers/appError.js';
 import { MulterError } from 'multer';
@@ -11,6 +11,8 @@ import appLogger from './src/helpers/appLogger.js';
 import cookieParser from "cookie-parser";
 import _ from './db/connectDb.js';
 import cors from 'cors';
+
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 
 const version = packageJson.version;
 const app = express();
