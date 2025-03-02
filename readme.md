@@ -184,7 +184,7 @@ Database configuration can be found in `db/connectDb.js`. Ensure the database is
 
 ## 📦 **API Documentation**
 
-   - [Hospital Management System Postman Documentation](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+   - [Hospital Management System Postman Documentation](https://documenter.getpostman.com/view/33766937/2sAYdimoaG)
 
 ---
 
