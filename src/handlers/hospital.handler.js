@@ -139,8 +139,7 @@ export const deleteHospitalById = async (req, res, next) => {
 
 export const updateHospitalById = async (req, res, next) => {
   try {
-    const { id } = req.query;
-
+    const id = req.params.id;
     if (!id) {
       throw new AppError({
         message: 'Please provide hospital id',
