@@ -7,6 +7,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_KISI_KO_BATANA_MAT,
 });
 
+console.log("Cloudinary Config Check:", {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "MISSING",
+  api_key: process.env.CLOUDINARY_KI_CHAVI || "MISSING",
+  api_secret: process.env.CLOUDINARY_KISI_KO_BATANA_MAT ? "SET" : "MISSING"
+});
+
 export const uploadToCloudinary = async (
   localFilePath,
   folder = 'hospitalImages'
