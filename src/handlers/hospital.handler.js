@@ -8,41 +8,48 @@ export const createHospital = async (req, res, next) => {
     const { name, city, address, speciality, ...other } = req.body;
 
     if (!name || !city || !address || !speciality || speciality.trim() === '') {
-      throw new AppError({
-        message: 'Name, city, address, and speciality are required fields',
-        statusCode: 400,
-      });
+      return next(new AppError({ 
+        message: 'Name, city, address, and speciality are required fields', 
+        statusCode: 400 
+      }));
     }
 
     if (!req.files || req.files.length === 0) {
-      throw new AppError({
-        message: 'Please upload at least one image',
-        statusCode: 400,
-      });
+      return next(new AppError({ 
+        message: 'Please upload at least one image', 
+        statusCode: 400 
+      }));
     }
 
     const capitalizeFirstLetter = (str) =>
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-    let imageUrls;
+    let imageUrls = [];
+
     try {
       imageUrls = await Promise.all(
         req.files.map((image) => uploadToCloudinary(image.path, 'hospitalImages'))
       );
     } catch (uploadError) {
       console.error('Image upload error:', uploadError);
-      // return next(new AppError({ message: 'Image upload failed', statusCode: 500 }));
+      return next(new AppError({ message: 'Image upload failed', statusCode: 500 }));
     }
+
+    if (!imageUrls.length) {
+      return next(new AppError({ message: 'No images uploaded', statusCode: 500 }));
+    }
+
+    const formattedSpeciality = speciality
+      .split(',')
+      .map((item) => capitalizeFirstLetter(item.trim()))
+      .filter((item) => item);
 
     const hospital = new Hospital({
       name,
       city,
       address,
       images: imageUrls,
-      speciality: speciality
-        .split(',')
-        .map((item) => capitalizeFirstLetter(item.trim()))
-        .filter((item) => item), 
+      speciality: formattedSpeciality,
       ...other,
     });
 
@@ -52,15 +59,17 @@ export const createHospital = async (req, res, next) => {
       statusCode: 201,
       message: 'Hospital created successfully',
       data: {
-        name: savedHospital.name,
         id: savedHospital._id,
+        name: savedHospital.name,
         images: savedHospital.images,
       },
     });
+
   } catch (error) {
     next(error);
   }
 };
+
 
 
 export const getHospitalsByFilter = async (req, res, next) => {

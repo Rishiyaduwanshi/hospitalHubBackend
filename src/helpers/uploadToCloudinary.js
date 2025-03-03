@@ -27,7 +27,7 @@ export const uploadToCloudinary = async (
         fs.unlinkSync(localFilePath);
       }
     } catch (fsError) {
-        throw `File delete error: ${fsError}`;
+      throw new Error(`File delete error: ${fsError}`);
     }
   }
 };
