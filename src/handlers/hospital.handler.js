@@ -32,7 +32,7 @@ export const createHospital = async (req, res, next) => {
       );
     } catch (uploadError) {
       console.error('Image upload error:', uploadError);
-      return next(new AppError({ message: 'Image upload failed', statusCode: 500 }));
+      return next(new AppError({ message: uploadError, statusCode: 500 }));
     }
 
     if (!imageUrls.length) {
