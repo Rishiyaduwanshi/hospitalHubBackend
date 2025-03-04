@@ -14,7 +14,7 @@ import sendEmail from '../services/mail.service.js';
 import signupEmailTemplate from '../templates/signup.temp.js';
 import adminApprovalEmailTemplate from '../templates/adminApproval.temp.js';
 import approvalEmailTemplate from '../templates/approval.temp.js';
-import fs from 'fs'
+import fs from 'fs';
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 const version = packageJson.version;
 
@@ -81,12 +81,6 @@ const signupAdmin = async (req, res, next) => {
       password: await hashPassword(password),
     });
 
-    const tala = generateToken({
-      id: newAdmin._id,
-      username: newAdmin.username,
-    });
-
-    // res.cookie('tala', tala, cookieOptions);
 
     newAdmin.save();
     sendResponse(res, {
@@ -124,6 +118,14 @@ const signinAdmin = async (req, res, next) => {
         { username: trimAndLowercaseUsernameOrEmail },
       ],
     });
+
+    if (!admin.isApproved)
+      throw new AppError({
+        message:
+          'Your account has not been approved yet.Please contact the administrator or send an email to contact@rishiyaduwanshi.me',
+        statusCode: 403,
+      });
+
     if (!admin || !(await isPasswordMatch(password, admin.password))) {
       throw new AppError({
         message: 'Invalid credentials',
@@ -223,7 +225,7 @@ export const approveAdmin = async (req, res, next) => {
       );
     }
 
-    sendResponse(res,{
+    sendResponse(res, {
       statusCode: 200,
       message: 'Admin approved successfully and email sent.',
     });
