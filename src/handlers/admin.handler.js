@@ -207,12 +207,11 @@ export const approveAdmin = async (req, res, next) => {
     }
 
     const name = approvedAdmin.name;
-
     try {
       await sendEmail({
         to: email,
         subject: 'Your admin account has been approved.',
-        html: approvalEmailTemplate(name, `${process.env.FRONTEND_URL}/signin`),
+        html: approvalEmailTemplate(name, `${req.header.origin}/signin`),
       });
     } catch (emailError) {
       console.error('Error sending email:', emailError);
