@@ -10,6 +10,13 @@ import {
   isPasswordMatch,
 } from '../services/admin.service.js';
 import { generateToken } from '../helpers/jwt.js';
+import sendEmail from '../services/mail.service.js';
+import signupEmailTemplate from '../templates/signup.temp.js';
+import adminApprovalEmailTemplate from '../templates/adminApproval.temp.js';
+import approvalEmailTemplate from '../templates/approval.temp.js';
+import fs from 'fs'
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+const version = packageJson.version;
 
 const cookieOptions = {
   httpOnly: true,
@@ -52,6 +59,21 @@ const signupAdmin = async (req, res, next) => {
       });
     }
 
+    await sendEmail({
+      to: email,
+      subject: 'Welcome to HospitalHub',
+      html: signupEmailTemplate(name.trim().split(' ')[0]),
+    });
+    await sendEmail({
+      to: process.env.MAIL_USERNAME,
+      subject: 'New Admin Signup Request',
+      html: adminApprovalEmailTemplate(
+        name,
+        email,
+        `${req.protocol}://${req.get('host')}/api/v${version}/admin/approve/${email}`
+      ),
+    });
+
     const newAdmin = await Admin.create({
       name,
       email,
@@ -64,7 +86,7 @@ const signupAdmin = async (req, res, next) => {
       username: newAdmin.username,
     });
 
-    res.cookie('tala', tala, cookieOptions);
+    // res.cookie('tala', tala, cookieOptions);
 
     newAdmin.save();
     sendResponse(res, {
@@ -160,6 +182,54 @@ export const getHospitalStats = async (req, res, next) => {
     });
   } catch (error) {
     next(new AppError({ message: 'Failed to fetch stats', statusCode: 500 }));
+  }
+};
+export const approveAdmin = async (req, res, next) => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      return next(
+        new AppError({ message: 'Please provide email', statusCode: 400 })
+      );
+    }
+
+    const approvedAdmin = await Admin.findOneAndUpdate(
+      { email },
+      { isApproved: true },
+      { new: true, runValidators: true }
+    );
+
+    if (!approvedAdmin) {
+      return next(
+        new AppError({ message: 'Admin not found', statusCode: 404 })
+      );
+    }
+
+    const name = approvedAdmin.name;
+
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Your admin account has been approved.',
+        html: approvalEmailTemplate(name, `${process.env.FRONTEND_URL}/signin`),
+      });
+    } catch (emailError) {
+      console.error('Error sending email:', emailError);
+      return next(
+        new AppError({
+          message: 'Admin approved, but email could not be sent.',
+          statusCode: 500,
+        })
+      );
+    }
+
+    sendResponse(res,{
+      statusCode: 200,
+      message: 'Admin approved successfully and email sent.',
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
